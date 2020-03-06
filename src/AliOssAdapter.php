@@ -23,6 +23,7 @@ class AliOssAdapter extends AbstractAdapter
      * @var Log debug Mode true|false
      */
     protected $debug;
+
     /**
      * @var array
      */
@@ -73,6 +74,11 @@ class AliOssAdapter extends AbstractAdapter
     protected $ssl;
 
     protected $isCname;
+
+    /**
+     * @var boolean
+     */
+    protected $checkHasWhenGetUrl;
 
     //配置
     protected $options = [
@@ -567,7 +573,7 @@ class AliOssAdapter extends AbstractAdapter
      */
     public function getUrl( $path )
     {
-        if (!$this->has($path)) throw new FileNotFoundException($filePath.' not found');
+        if ($this->checkHasWhenGetUrl && !$this->has($path)) throw new FileNotFoundException($path.' not found');
         return ( $this->ssl ? 'https://' : 'http://' ) . ( $this->isCname ? ( $this->cdnDomain == '' ? $this->endPoint : $this->cdnDomain ) : $this->bucket . '.' . $this->endPoint ) . '/' . ltrim($path, '/');
     }
 
@@ -676,5 +682,10 @@ class AliOssAdapter extends AbstractAdapter
             Log::error($fun . ": FAILED");
             Log::error($e->getMessage());
         }
+    }
+
+    public function setCheckHasWhenGetUrl($checkHasWhenGetUrl = false)
+    {
+        $this->checkHasWhenGetUrl = $checkHasWhenGetUrl;
     }
 }

@@ -39,6 +39,7 @@ class AliOssServiceProvider extends ServiceProvider
             $ssl       = empty($config['ssl']) ? false : $config['ssl']; 
             $isCname   = empty($config['isCName']) ? false : $config['isCName'];
             $debug     = empty($config['debug']) ? false : $config['debug'];
+            $checkHasWhenGetUrl = empty($config['check_has_when_get_url']) ? false : $config['check_has_when_get_url'];
 
             $endPoint  = $config['endpoint']; // 默认作为外部节点
             $epInternal= $isCname?$cdnDomain:(empty($config['endpoint_internal']) ? $endPoint : $config['endpoint_internal']); // 内部节点
@@ -47,6 +48,8 @@ class AliOssServiceProvider extends ServiceProvider
 
             $client  = new OssClient($accessId, $accessKey, $epInternal, $isCname);
             $adapter = new AliOssAdapter($client, $bucket, $endPoint, $ssl, $isCname, $debug, $cdnDomain);
+
+            $adapter->setCheckHasWhenGetUrl($checkHasWhenGetUrl);
 
             //Log::debug($client);
             $filesystem =  new Filesystem($adapter);
